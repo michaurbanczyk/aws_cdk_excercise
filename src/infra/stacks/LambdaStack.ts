@@ -33,5 +33,7 @@ export class LambdaStack extends Stack {
                 TABLE_NAME: props.exerciseTable.tableName
             }
         });
+
+        this.exportValue(this.postData.functionArn)
     }
 }

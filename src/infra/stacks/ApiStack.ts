@@ -1,7 +1,6 @@
 import {Stack, StackProps} from "aws-cdk-lib";
 import {Construct} from "constructs";
 import {LambdaIntegration, RestApi} from "aws-cdk-lib/aws-apigateway";
-import { Fn } from 'aws-cdk-lib';
 import * as lambda from "aws-cdk-lib/aws-lambda";
 
 interface ApiStackProps extends StackProps {
