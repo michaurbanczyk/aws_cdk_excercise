@@ -5,7 +5,8 @@ import { Fn } from 'aws-cdk-lib';
 import * as lambda from "aws-cdk-lib/aws-lambda";
 
 interface ApiStackProps extends StackProps {
-    helloWorldLambda: lambda.Function
+    getData: lambda.Function
+    postData: lambda.Function
 }
 
 export class ApiStack extends Stack {
@@ -13,11 +14,13 @@ export class ApiStack extends Stack {
     constructor(scope: Construct, id: string, props: ApiStackProps) {
         super(scope, id, props);
 
-        const {helloWorldLambda} = props
+        const {getData, postData} = props
 
-        const lambdaIntegration = new LambdaIntegration(helloWorldLambda)
+        const getDataIntegration = new LambdaIntegration(getData)
+        const postDataIntegration = new LambdaIntegration(postData)
         const api = new RestApi(this, 'ExerciseApi')
         const exerciseResource = api.root.addResource('exercise')
-        exerciseResource.addMethod('GET', lambdaIntegration)
+        exerciseResource.addMethod('GET', getDataIntegration)
+        exerciseResource.addMethod('POST', postDataIntegration)
     }
 }
