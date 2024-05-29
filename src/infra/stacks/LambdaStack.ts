@@ -2,14 +2,11 @@ import {Stack, StackProps} from "aws-cdk-lib";
 import {Construct} from "constructs";
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import {ITable} from "aws-cdk-lib/aws-dynamodb";
-import {Architecture} from "aws-cdk-lib/aws-lambda";
-import * as path from "path";
-import {Runtime} from "inspector";
 import {Effect, PolicyStatement} from "aws-cdk-lib/aws-iam";
 
 
 interface LambdaStackProps extends StackProps {
-    exerciseTable: ITable
+    exerciseTable: ITable,
 }
 
 export class LambdaStack extends Stack {
@@ -51,7 +48,7 @@ export class LambdaStack extends Stack {
         this.postData.addToRolePolicy(new PolicyStatement({
             effect: Effect.ALLOW,
             resources: [props.exerciseTable.tableArn],
-            actions:[
+            actions: [
                 'dynamodb:PutItem',
             ]
         }))
@@ -59,7 +56,7 @@ export class LambdaStack extends Stack {
         this.getData.addToRolePolicy(new PolicyStatement({
             effect: Effect.ALLOW,
             resources: [props.exerciseTable.tableArn],
-            actions:[
+            actions: [
                 'dynamodb:Scan',
                 'dynamodb:GetItem',
             ]
@@ -68,7 +65,7 @@ export class LambdaStack extends Stack {
         this.deleteData.addToRolePolicy(new PolicyStatement({
             effect: Effect.ALLOW,
             resources: [props.exerciseTable.tableArn],
-            actions:[
+            actions: [
                 'dynamodb:DeleteItem',
             ]
         }))
