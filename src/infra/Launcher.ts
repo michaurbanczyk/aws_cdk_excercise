@@ -11,5 +11,6 @@ const lambdaStack = new LambdaStack(app, 'LambdaStack', {
 })
 new ApiStack(app, 'ApiStack', {
     getData: lambdaStack.getData,
-    postData: lambdaStack.postData
+    postData: lambdaStack.postData,
+    deleteData: lambdaStack.deleteData,
 })
