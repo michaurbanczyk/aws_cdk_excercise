@@ -1,0 +1,15 @@
+[flake8]
+# E266 - too many leading '#' for block comment
+#        https://www.flake8rules.com/rules/E266.html
+# W503 - line break before binary operator
+#        https://www.flake8rules.com/rules/W503.html
+# E203 - Whitespace before ':'
+#        https://www.flake8rules.com/rules/E203.html
+ignore = E266,W503
+extend-ignore = E203
+exclude = .venv,*.txt,__init__.py,dist,cdk.out,node_modules
+max-line-length = 119
+# McCabe complexity threshold
+max-complexity = 18
+# select errors and warnings to enable which are off by default
+select = B,C,E,F,W,T4,B9
