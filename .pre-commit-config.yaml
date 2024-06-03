@@ -7,7 +7,7 @@ repos:
     hooks:
       - id: black
         name: black
-        entry: .venv/bin/black --check .
+        entry: .venv/bin/black .
         language: system
         pass_filenames: false
 
@@ -19,6 +19,6 @@ repos:
 
       - id: isort
         name: isort
-        entry: .venv/bin/isort --check-only .
+        entry: .venv/bin/isort .
         language: system
         pass_filenames: false
