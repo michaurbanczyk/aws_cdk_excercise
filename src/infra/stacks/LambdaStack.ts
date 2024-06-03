@@ -14,9 +14,16 @@ export class LambdaStack extends Stack {
     public readonly getData: lambda.Function
     public readonly postData: lambda.Function
     public readonly deleteData: lambda.Function
+    public readonly pollingData: lambda.Function
 
     constructor(scope: Construct, id: string, props: LambdaStackProps) {
         super(scope, id, props);
+
+        const sharedLayer = new lambda.LayerVersion(this, 'shared-layer', {
+            code: lambda.Code.fromAsset('dist'),
+            compatibleRuntimes: [lambda.Runtime.PYTHON_3_12],
+            layerVersionName: 'shared-layer',
+        })
 
         this.getData = new lambda.Function(this, 'GetData', {
             runtime: lambda.Runtime.PYTHON_3_12,
@@ -24,7 +31,8 @@ export class LambdaStack extends Stack {
             handler: 'get_handler.get_data',
             environment: {
                 TABLE_NAME: props.exerciseTable.tableName
-            }
+            },
+            layers: [sharedLayer]
         });
 
         this.postData = new lambda.Function(this, 'PostData', {
@@ -33,7 +41,8 @@ export class LambdaStack extends Stack {
             handler: 'post_handler.post_data',
             environment: {
                 TABLE_NAME: props.exerciseTable.tableName
-            }
+            },
+            layers: [sharedLayer]
         });
 
         this.deleteData = new lambda.Function(this, 'DeleteData', {
@@ -42,7 +51,18 @@ export class LambdaStack extends Stack {
             handler: 'delete_handler.delete_data',
             environment: {
                 TABLE_NAME: props.exerciseTable.tableName
-            }
+            },
+            layers: [sharedLayer]
+        });
+
+        this.pollingData = new lambda.Function(this, 'PollingData', {
+            runtime: lambda.Runtime.PYTHON_3_12,
+            code: lambda.Code.fromAsset('src/services/lambdas'),
+            handler: 'polling_handler.polling_data',
+            environment: {
+                TABLE_NAME: props.exerciseTable.tableName
+            },
+            layers: [sharedLayer]
         });
 
         this.postData.addToRolePolicy(new PolicyStatement({
@@ -70,8 +90,14 @@ export class LambdaStack extends Stack {
             ]
         }))
 
+        // new aws_events.Rule(this, "my-rule-identifier", {
+        //     schedule: aws_events.Schedule.rate(Duration.minutes(1)),
+        //     targets: [new aws_events_targets.LambdaFunction(this.pollingData)],
+        // });
+
         this.exportValue(this.postData.functionArn)
         this.exportValue(this.getData.functionArn)
         this.exportValue(this.deleteData.functionArn)
+        this.exportValue(this.pollingData.functionArn)
     }
 }
