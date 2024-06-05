@@ -3,8 +3,6 @@ import os
 
 import boto3
 from lambda_types import Event
-import pandas
-import requests
 
 dynamodb = boto3.client("dynamodb")
 
@@ -12,16 +10,12 @@ dynamodb = boto3.client("dynamodb")
 def get_data(event: Event, lambda_context):
     table_name = os.environ["TABLE_NAME"]
 
-    print(pandas.__version__)
-
     query_string_parameters = event.get("queryStringParameters")
     if query_string_parameters and query_string_parameters.get("id"):
         dynamodb_item_id = query_string_parameters.get("id")
         results = dynamodb.get_item(TableName=table_name, Key={"id": {"S": dynamodb_item_id}})
         return {"statusCode": 200, "body": json.dumps(results.get("Item"))}
 
-    request = requests.get("https://api.github.com/")
-
     results = dynamodb.scan(TableName=table_name)
 
-    return {"statusCode": 201, "body": json.dumps({"results": results.get("Items"), "request": request.text})}
+    return {"statusCode": 201, "body": json.dumps({"results": results.get("Items")})}
