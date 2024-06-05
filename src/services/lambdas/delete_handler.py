@@ -3,6 +3,7 @@ import os
 
 import boto3
 from lambda_types import Event
+from utils import has_admin_group
 
 dynamodb = boto3.client("dynamodb")
 
@@ -10,6 +11,9 @@ dynamodb = boto3.client("dynamodb")
 def delete_data(event: Event, lambda_context):
     table_name = os.environ["TABLE_NAME"]
     query_string_parameters = event.get("queryStringParameters")
+
+    if not has_admin_group(event):
+        return {"statusCode": 401, "body": json.dumps("Not authorized")}
 
     if query_string_parameters and query_string_parameters.get("id"):
         dynamodb_item_id = query_string_parameters.get("id")
